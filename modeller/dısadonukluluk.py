@@ -31,17 +31,17 @@ class DisadonuklulukModel:
             return self.model.predict(self.text)
 
     class IcedonuklukModelveGiriskenlikModel:
-        data = DataHandler("data/dışa dönüklük/girişkenlik vs içe dönüklük/girişkenlik_vs_içedönüklük.csv").get_data()
-        y = LabelEncoder().fit_transform(data["label"])
-        X = data["text"]
+
         """Dışa dönüklük modeli içedönüklük ve girişkenlik alt ölçeği için kullanılır"""
 
-        def __init__(self, X=X, y=y, text=None, vectorizer=CountVectorizer()):
+        def __init__(self, text=None, vectorizer=CountVectorizer()):
             """ X: text
                 y: label encoded labels
                 text: text to predict"""
-            self.X = vectorizer.fit_transform(X)
-            self.model = LinearSVC(C=0.1, dual=True, loss="squared_hinge", penalty="l2", tol=0.0001).fit(self.X, y)
+            self.data = DataHandler("data/dışa dönüklük/girişkenlik vs içe dönüklük/girişkenlik_vs_içedönüklük.csv").get_data()
+            self.X = vectorizer.fit_transform(self.data["text"])
+            self.y = LabelEncoder().fit_transform(self.data["label"])
+            self.model = LinearSVC(C=0.1, dual=True, loss="squared_hinge", penalty="l2", tol=0.0001).fit(self.X, self.y)
             self.text = vectorizer.transform([text])
             self.predict()
 
