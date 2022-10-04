@@ -5,7 +5,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.feature_selection import RFE
-from data_handler import DataHandler
+from .data_handler import DataHandler
 
 
 class YumukBaslilik:
