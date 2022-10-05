@@ -1,3 +1,5 @@
+import pickle
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.preprocessing import LabelEncoder
@@ -15,8 +17,7 @@ class DuygusalDengeModel:
                 text: text to predict"""
             self.data = DataHandler("data/duygusal denge/endişeyeyatkınlık_vs_kendine+güven.csv").get_data()
             self.X = vectorizer.fit_transform(self.data.text)
-            self.y = LabelEncoder().fit_transform(self.data["label"])
-            self.model = LogisticRegression(C=20.0, dual=False, penalty="l2").fit(self.X, self.y)
+            self.model = pickle.load(open("modeller/duygusal_denge", 'rb'))
             self.text = vectorizer.transform([text])
             self.predict()
 

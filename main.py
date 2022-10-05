@@ -1,6 +1,7 @@
 from modeller.duygusal_denge import DuygusalDengeModel
 from modeller.dısadonukluluk import DisadonuklulukModel
 from modeller.ozdenemetimsorumluluk import OzdenetimSorumlulukModel
+from modeller.yumusakbaslilik import YumukBaslilik
 from profilescrapper import TwitterUserScraper
 import streamlit as st
 import pandas as pd
@@ -17,41 +18,47 @@ if user_name:
     @st.cache(allow_output_mutation=True, suppress_st_warning=True)
     def Data_Loading():
         data = TwitterUserScraper(user_name).get_tweets_df()
-        print("done")
+        durum = st.text("Tweetler yüklendi")
         data["duygusaldenge"] = data[["text"]].apply(
             lambda x: DuygusalDengeModel.EndiseyeYatkinlikVeKendineGuven(x["text"]).predict(), axis=1)
-        print("done1")
         data["duygsaldemge_label"] = data["duygusaldenge"].apply(
-            lambda x: "kendinegüven" if x == 1 else "endişeye yatkınlık")
-        print("done2")
+            lambda x: "kendinegüven" if x == 0 else "endişeye yatkınlık")
+        durum.text("Duygsal denge modeli tamamlandı")
 
         data["canlılık_dısadonukluk"] = data[["text"]].apply(
             lambda x: DisadonuklulukModel.CanlilikModel(x["text"]).predict(), axis=1)
-        print("done3")
-        data["canlılık"] = data["canlılık_dısadonukluk"].apply(lambda x: "canlı" if x == 1 else "None")
-        print("done4")
+        data["canlılık"] = data["canlılık_dısadonukluk"].apply(lambda x: "canlı" if x == 0 else "None")
+        durum.text("Canlılık modeli tamamlandı")
         data["içedönüklülük_vs_girişkenlik_dışadönüklülük"] = data[["text"]].apply(
             lambda x: DisadonuklulukModel.IcedonuklukModelveGiriskenlikModel(x["text"]).predict(), axis=1)
-        print("done5")
         data["içedönüklülük_vs_girişkenlik"] = data["içedönüklülük_vs_girişkenlik_dışadönüklülük"].apply(
-            lambda x: "girişkenlik" if x == 1 else "içedönüklülük")
-        print("done6")
+            lambda x: "girişkenlik" if x == 0 else "içedönüklülük")
+        durum.text("İçedönüklülük ve girişkenlik modeli tamamlandı")
 
         data["düzenlilik_ozdenetim"] = data[["text"]].apply(
             lambda x: OzdenetimSorumlulukModel.Duzenlilik(x["text"]).predict(), axis=1)
-        print("done7")
         data["düzenlilik"] = data["düzenlilik_ozdenetim"].apply(lambda x: "düzenlilik" if x == 1 else "None")
-        print("done8")
+        durum.text("Düzenlik modeli tamamlandı")
+
         data["sorumluluk_ozdenetim"] = data[["text"]].apply(
             lambda x: OzdenetimSorumlulukModel.Sorumluluk(x["text"]).predict(), axis=1)
-        print("done9")
         data["sorumluluk"] = data["sorumluluk_ozdenetim"].apply(lambda x: "sorumluluk" if x == 1 else "None")
-        print("done10")
+        durum.text("Sorumluluk modeli tamamlandı")
         data["kurallarabağlılıkvsheyecanarama_özdenemetimsorumluluk"] = data[["text"]].apply(
             lambda x: OzdenetimSorumlulukModel.KurallarabaglilikVeHeyecanarama(x["text"]).predict(), axis=1)
         data["kurallarabağlılıkvsheyecanarama"] = data["kurallarabağlılıkvsheyecanarama_özdenemetimsorumluluk"].apply(
             lambda x: "kurallarabağlılık" if x == 1 else "heyecanarama")
-        print("done")
+        durum.text("Kurallara bağlılık ve heyecan arama modeli tamamlandı")
+
+        data["sakinlikvetepkisellik_yumuşaklık"] = data[["text"]].apply(
+            lambda x: YumukBaslilik.SakinlikVeTepkisellik(x["text"]).predict(), axis=1)
+        data["sakinlikvetepkisellik"] = data["sakinlikvetepkisellik_yumuşaklık"].apply(
+            lambda x: "sakinlik" if x == 1 else "tepki")
+        durum.text("Sakinlik ve tepki modeli tamamlandı")
+        data["yumuşaklık_yumuşaklık"] = data[["text"]].apply(lambda x: YumukBaslilik.Yumusaklik(x["text"]).predict(), axis=1)
+        data["yumuşaklık"] = data["yumuşaklık_yumuşaklık"].apply(lambda x: "yumuşaklık" if x == 1 else "None")
+        durum.text("Yumuşak Başlılık modeli tamamlandı")
+        durum.text("Tamamlandı!")
         return data
     data_load_state = st.text('Loading data...')
     df = Data_Loading()
