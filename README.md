@@ -8,5 +8,5 @@ streamlit,
 snscrape, 
 arrow.
 
-## Motivaston:
+## Motivasyon:
 Günümüzde kişilik testi, yetenek testi gibi uygulamalar üzerinden insanlar değerlendirilmektedir. Bu durumu kolaylaştırmak ve daha "düşük maliyetli" hale getirmek için oluşturulmuş bir projedir. Proje oluşturulurken [Beş Faktör Kişilik Envanteri’nin Geliştirilmesi ](https://toad.halileksi.net/sites/default/files/pdf/bes-faktor-kisilik-envanteri-toad.pdf) makalesindeki verilerden yararlanılmıştır.
